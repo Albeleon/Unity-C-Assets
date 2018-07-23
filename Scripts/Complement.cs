@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Complement:
  * This file creates a MonoBehaviour to insert in a GameObject in Unity C#, so the functions from AuxeUnity GetRecursive work correctly.
  * It needs the library "System.Collections.Generic" and "UnityEngine" to work, so it only works on Unity projects.
