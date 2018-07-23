@@ -243,18 +243,296 @@ This file contains the main method extensions developed to facilitate functions 
       - "List<T> A.GetRecursive<T>(bool isIncluded, depth)": Returns a list of GameObjects or a specific MonoBehaviour (if they have it) linked to the GameObject via the script "Complement" (Complement.cs) recursively, with isIncluded determining if true whether a particular GameObject should be included or not if its value in its Complement.IsIncluded is true or not, and Depth determining the level of depth of the variables that will be taken.
 
 # Auxf.cs (Auxiliar Functions):
-blabla
+This file contains a few main functions to facilitate certain operations in C#. It's composed of the following classes:
+- <b>"Auxf":</b> This class is a singleton (called by the attribute "i") that calls generic functions. Quite a few of the functions are thought to be used as delegates:
+
+      - "bool Auxf.i.IsNotNull<T>(T e) where T : class": Returns whether the class is null.
+      - "bool Auxf.i.GreaterThan<T>(T v1, T v2) where T: IComparable": Returns whether v1 is greater by being compared than v2.
+      - "bool Auxf.i.GreaterEqualThan<T>(T v1, T v2) where T: IComparable": Returns whether v1 is greater or equal by being compared than v2.
+      - "bool Auxf.i.LessThan<T>(T v1, T v2) where T: IComparable": Returns whether v1 is less by being compared than v2.
+      - "bool Auxf.i.LessEqualThan<T>(T v1, T v2) where T: IComparable": Returns whether v1 is less or equal by being compared than v2.
+      - "bool Auxf.i.Disequals<T>(T v1, T v2)": Returns whether v1 is not equal to v2.
+      
+      - "AuxPolygon IntersectionTwoLines(RectTransform a, RectTrasform b, AuxCoord co)": Returns an AuxPolygon with the point positions of the intersection of the RectTransform in a 0Z plane (ignoring Z coordinate) and using the X or Y coordinate of the objects as the main line/angle.
+- <b>"Auxf.SML":</b> This class is a singleton (called by the attribute "i") that calls SML-related functions. SML (Separator Markup Language) is a type of language to write in text files for a type of operations to be parsed.
+The structure is:
+
+      Important: Characters '[', ']' and '*' are not part of the name.
+                 []* represents it can be repeated from "(0,...)".
+
+      [method_title {
+          [word(sub[,sub]*)]*;
+      }]*
+     
+      i.e.:
+      a_title {
+          element_1 element_2(attr_1,attr_2) element_3;
+          element_a(attr_a) element_b;
+      }
+With this structure, the function works by modifying strings. The functions are the following:
+
+      - "string Auxf.SML.i.GetMethod(string text, string identifier)": Returns the content of a method's name inside the text (brackets and spaces not included).
+      - "string[] Auxf.SML.i.SplitLines(string method)": Given a method, separate by lineSeparator (';') each line inside method.
+      - "string[] Auxf.SML.i.SplitWords(string line)": Given a line, separate by wordSeparator (' ') each word inside the line. ' ' spaces are no allowed inbetween each word.
+      - "string[] Auxf.SML.i.SplitParts(string word)": Given a word, if the word has two parts, returns a string of size 2 with the name and the content in the parenthesis (the parenthesis are excluded from the string already).
+      - "string[] Auxf.SML.i.SplitSubs(string part)": Given a parenthesis part, separate by subSeparator (',') the diferent subcode of this part.
+      
+      - "bool Auxf.SML.i.FormatParts(string word)": Given a word, returns whether it fulfills the "parts" format (name and parenthesis).
+      - "bool Auxf.SML.i.FormatName(string word, string name)": Given a word, returns whether it fulfills the "parts" format (name and parenthesis) and it has a particular name.
+      - "bool Auxf.SML.i.FormatSubs(string word, params char[] names)": Given a word, returns whether the subs inside the parenthesis code include, at least, one of the chars.
+      - "bool Auxf.SML.i.FormatSubs(string word, IEnumerable<char> names)": Given a word, returns whether the subs inside the parenthesis code include, at least, one of the chars.
+      - "bool Auxf.SML.i.FormatParts(string word)": Given a word, returns whether it fulfills the "parts" format (name and parenthesis).
+      
+      - "Dictionary<char, float> Auxf.SML.i.Dictionary(string parameters, string keywords)": Given a sub with this format ([<number><char>]*), it turns the sub into a dictionary where the key it's the char (only valid inside those inside the "keywords" list) and the value is the number.
+      - "string Auxf.SML.i.SubsToWords(string word, string keywords, SMLStringDelegate SMLFunction)": Given a word with each sub in this format ([<number><char>]*), it separates each sub into a word where each one's value is calculated with the previous sub marked according to the SMLFunction (variable).
 
 # AuxGameObject.cs (Auxiliar GameObject):
-blablabla
+This file contains a few main functions that affect and are only usable by a GameObject that inherits from MonoBehaviour. This means we need to define two different classes:
+- <b>"Auxg":</b> Class that allows to call automatically the GameObject in the same way a singleton would call it ("i"). In that case, however, it automatically searches the first time if a GameObject with the AuxGameObject and the tag "Auxg" exists.
+- <b>"Auxg.Spawner":</b> This class creates instances of a GameObject Spawner. When it's constructed or set, you can set the different parameters that modify aspects of the gameObject when it's finally instantiated (its parent, position, rotation, scale or material), and when it's ready, the Instantiate function is called, applying all of them. Its main function is (A):
+
+      - "GameObject A.Instantiate()": Returns a new GameObject instantiated from the object given, and with all the changes applied.
+- <b>"AuxgStatic":</b> This static class allows to extend some new classes with useful methods. The main extension it does is for IEnumerable<Auxg.Spawner> (A):
+
+      - "GameObjectDelegate[] A.Instantiate()": Returns the Instantiate delegate of each Spawner object.
+- <b>"AuxGameObject":</b> This is a GameObject script that allows to do a bunch of GameObject-related operations that need "MonoBehaviour" inherited. It needs to be inserted in a GameObject with the tag "Auxg" so it can be called with "Auxg.i" and access these functions:
+
+      - "List<SMaterial> Auxg.i.quickMaterial": This attribute allows to define in the GameObject a struct of material of easy access, by putting their code, their short code and the material.
+      - "List<SIndividual> Auxg.i.quickAccess": This attribute allows to define in the GameObject a struct of gameobjects of easy access, by putting their name and the GameObject.
+      
+      - "Material Auxg.i.GetMaterial(string name)": Returns the material with a particular name or short code that was filled in the QuickMaterial list.
+      - "GameObject Auxg.i.GetObject(string name)": Returns the GameObject with a particular name that was filled in the QuickAccess list.
+      - "T Auxg.i.GetObject<T>(string name) where T : MonoBehaviour": Returns the MonoBehaviour of a GameObject with a particular name that was filled in the QuickAccess list.
+      
+      - "Object Auxg.i.o_UITriangle": Object defined in "Awake" loading a prefab ("Prefabs/UITriangle"). It allows to create triangles for meshes, and it's used in CreateUIMesh.
+      
+      - "GameObject Auxg.i.CreateUIMesh(string name, AuxMesh vertices2D, Transform parent, Material material, Material negMaterial)": Returns an empty GameObject full of UITriangles that replicate an AuxMesh (Auxiliar Mesh), with the particular material to see and the negative Material to negate the other material.
+      
+      - "GameObject Auxg.i.Duplicate(GameObject go, bool isSibling)": Creates a Duplicate of the GameObject and returns it, either as a son (isSibling false) or as a later sibling (isSibling true).
+      - "Transform Auxg.i.Duplicate(Transform go, bool isSibling)": Creates a Duplicate of the GameObject and returns it, either as a son (isSibling false) or as a later sibling (isSibling true).
+      - "T Auxg.i.Duplicate<T>(t go, bool isSibling) where T : MonoBehaviour": Creates a Duplicate of the GameObject and returns it, either as a son (isSibling false) or as a later sibling (isSibling true).
+      
+      - "void Auxg.i.Set(GameObject go, Material material): Changes the material of the GameObject, if it's possible, to "material".
+      - "void Auxg.i.Set(GameObject go, Color color)": Changes the material of the GameObject, if it's possible, to "color".
+      
+      - "void Delay<...>(VoidDelegate<...> function, <...> arg{...}, float time)": For a delegate (up to 4 input arguments), it executes that function a particular time later. The "time" value is in seconds. If the value is too small, it executes it the next frame. The arguments of the function must be pust after the Delegate and before the time.
+      - "void Delay<T,...>(TDelegate<T,...> function, <...> ..., float time): For a delegate (up to 4 input arguments), it executes that function a particular time later. The "time" value is in seconds. If the value is too small, it executes it the next frame. The arguments of the function must be pust after the Delegate and before the time.
+      - "void ExecuteUntilFalse(TDelegate<bool> function, float time)": For a bool delegate with no input arguments, it executes that function until the result is "false". The "time" value shows the frequency by which the function is recalled. If the value is too small, it executes it the next frame.
+      - "void DelayUntilFalse<T>(TDelegate<T> function, TDelegate<bool> wait, float time)": For a delegate and bool delegate with no input arguments, it executes the "wait" function until the result is "false". When that happens, it executes the "function". The "time" value shows the frequency by which the function is recalled. If the value is too small, it executes it the next frame.
+      - "void DelayUntilFalse(VoidDelegate function, TDelegate<bool> wait, float time)": For a delegate and bool delegate with no input arguments, it executes the "wait" function until the result is "false". When that happens, it executes the "function". The "time" value shows the frequency by which the function is recalled. If the value is too small, it executes it the next frame.
+      
+      - "GameObject InstantiateEmpty(string name, Transform parent, bool isFirstSibling)": Returns a new empty GameObject with a new name from a parent. It can be the last or first sibling depending of "isFirstSibling".
+      - "GameObject InstantiateObject(Object obj, Transform parent, Material material)": Returns a GameObject from a particular Object with a particular parent and material.
+      - "GameObject InstantiateObject(Object obj, Transform parent, Vector3 position, Quaternion rotation, Vector3 scale, Material material)": Returns a GameObject from a particular Object with a particular parent, position, rotation, scale and material.
 
 # Auxi.cs (Auxiliar Input):
-blablabla
+This file contains a MonoBehaviour class and class functions to structure and expand input operations in Unity C#. The classes are:
+- <b>"Auxi : MonoBehaviour":</b> GameObject script that allows to configure a bunch of keys for a particular name instead of for separate with the struct "KeyPar". You configure this from the Unity Editor, and it's needed that this class has the tag "TAuxi" to work (i.e. you can create the string "Down" associated to the keys "downArrow", "S", "Numpad2", "JoystickDown", etc.).
+- <b>"AuxInput":</b> It allows to call generic Key functions with a string defined in the Auxi class. This is a singleton function (called with "i"). When this function is called, it searches inmediately for the GameObject that has the TAuxi tag, and take its Auxi script, so there should be one defined. The current functions implemented are:ç
+
+      - "bool AuxInput.i.GetKeyDown(string list)": Returns whether a particular string (and therefore, any KeyCode associated with it) has been pressed down.
+      - "bool AuxInput.i.GetKey(string list)": Returns whether a particular string (and therefore, any KeyCode associated with it) is being pressed.
+      - "bool AuxInput.i.GetKeyUp(string list)": Returns whether a particular string (and therefore, any KeyCode associated with it) has been pressed up.
 
 # Auxp.cs (Auxiliar Polygons):
-blablabla
+This file contains a lot of class to do 2D geometric operations with Lines, Segments, Wide Lines, Polygons and Meshes. Therefore, it has a lot of classes and operations:
+- <b>"Auxp"</b>: This is a singleton function ("i") that allows to call normal methods and properties from the upcoming classes as functions with input parameters. This will allow to use them for Delegate functions with arguments. This part won't be commented in detail since their details will go in the other classes. However, a few translation of operations:
+  - "Dot(A, B)": "A * B"
+  - "Substract(A, B)": "A - B"
+- <b>"AuxpStatic":</b> This class applies extensions to Auxp classes that aren't the particular classes to be more comfortable to use them:
+  - List[AuxSegment] Extensions (A):
+
+        - "AuxSegment A.Connection(AuxSegment seg, Vector2 extreme)": Given a list of segments connected, a segment included in them and an extreme, it gives the other connected segment.
+        - "AuxSegment A.Next(Vector2 extreme)": Given a list of segments connected, it gives the segment that start with that extreme.
+        - "List<Vector2> A.Points()": Given a list of segments, it gives the list of points that compose it, eliminating repeats.
+  - List[AuxMesh] Extensions (A):
+  
+        - "AuxMesh A.Combine()": Given a list of meshes, it combines into one their polygons, but the positive and the negative ones.
+- <b>"struct AuxTriangle":</b> This struct gets the form of a Triangle, composed of 3 points, and a few operations to facilitate their use. These are used to triangulate polygons and meshes. Its functions are (A):
+
+      - "bool A.IsInside (Vector3 P)": Returns whether the point is inside the triangle.
+      - "bool A.IsExtreme (Vector3 P)": Returns whether the point is one of the extremes of the triangle.
+      - "bool A.Equals (AuxTriangle t1)": Returns whether the triangle is equivalent to the other. The order doesn't matter.
+- <b>"struct AuxLine":</b> This struct simulates the form of a Line with only a position and direction in a 2D environment (ignoring Z). This Line is defined by two points like it's a segment, but it's only to mark the position and rotation. Its functions are (A):
+
+      - "bool A.IsInside (Vector2 vec)": Returns whether the point is inside the line.
+      - "bool A.Intersects (AuxLine def)": Returns whether those two lines intersect. Parallel lines never intersect regardless of whether they are the same.
+      
+      - "static Vector2 operator *(AuxLine def1, AuxLine def2)": Returns the intersection point between two lines, as long as they intersect.
+- <b>"struct AuxSegment":</b> This struct simulates the form of a Segment between two positions in a 2D environment (ignoring Z). While the form is similar to AuxLine, the limit is only in those extremes, so their functions work differently. Its functions are (A):
+
+      - "static List<AuxSegment> AuxSegment.Pair (List<Vector2> points)": Given a list of points (size multiple of 2), it returns a list of AuxSegments each composed by each par.
+      
+      - "bool A.IsNaN ()": Function: Returns whether a point of the segment is NaN.
+      - "bool A.Equals (AuxSegment seg)":  Returns whether the segments are similar. Being both NaN is included, and their extremes on the other side.
+      
+      - "bool A.IsInside (Vector2 vec)": Returns whether the point is inside the line.
+      - "bool A.IsInside (Vector2 vec, bool exclude)": Returns whether the point is inside the segment excluding one extreme.
+      - "bool A.IsInside (AuxSegment vec, bool spin)": Returns whether the input segment is inside the main segment. If "spin" is true, then it checks whether the main segment is inside the input segment.
+      
+      - "bool A.IsExtreme (Vector2 vec)": Returns whether the point is one extreme.
+      - "bool A.IsExtreme (Vector2 vec, bool exclude)": Returns whether the point is one extreme, excluding one of them. If "exclude" is "false", the extreme excluded is the first one. If "true", it's the second one.
+      
+      - "bool A.Nearest (Vector2 vec)": Returns the nearest extreme to the input point.
+      - "bool A.Nearest (Vector2 vec, Vector2 other)": Returns the nearest extreme to the input point in comparison with the other. This means, if the first point is closer to one extreme than the other, it takes that extreme, with preference to the start extreme.
+      - "bool A.Nearest (AuxSegment vec, bool spin)": Returns the nearest extreme of the main segment to the input segment. If "spin" is true, then it returns the nearest extreme of the input segment to the main segment.
+      
+      - "bool A.Further (Vector2 vec)": Returns the further extreme to the input point.
+      - "bool A.Further (Vector2 vec, Vector2 other)": Returns the further extreme to the input point in comparison with the other. This means, if the first point is further to one extreme than the other, it takes that extreme, with preference to the start extreme.
+      - "bool A.Further (AuxSegment vec, bool spin)": Returns the further extreme of the main segment to the input segment. If "spin" is true, then it returns the further extreme of the input segment to the main segment.
+      
+      - "float A.Distance (Vector2 vec)": Returns the minimal distance between a point and the segment.
+      - "float A.SqrDistance (Vector2 vec)": Returns the minimal square distance between a point and the segment.
+      
+      - "bool A.Intersects (AuxLine def)": Returns whether the segment and a line intersect. Parallels never intersect.
+      - "bool A.Intersects (AuxSegment def)": Returns whether two segments intersect. Parallels never intersect.
+      
+      - "override string A.ToString ()": Returns a string with the data of the extreme points that define the segment.
+      
+      - "static Vector2 operator *(AuxSegment def1, AuxLine def2)" (& opposite): Returns the intersection point between a segment and a line, as long as they intersect. Otherwise, it returns Vector2.negativeInfinity.
+      - "static Vector2 operator *(AuxSegment def1, AuxSegment def2)": Returns the intersection point between two segments, as long as they intersect. Otherwise, it returns Vector2.negativeInfinity.
+      
+      - "static List<AuxSegment> operator -(AuxSegment def1, Vector2 def2)": Returns a list with two segments if the vector is inside the segment (aside of the extremes). Otherwise, it returns a list with only one.
+      - "static List<AuxSegment> operator -(AuxSegment def1, AuxLine def2)": Returns a list with two segments if the line intersects with the segment (aside of the extremes). Otherwise, it returns a list with only one.
+      - "static List<AuxSegment> operator -(AuxSegment def1, AuxSegment def2)": Returns a list with two segments if the two segments intersect (aside of the extremes). In case the first segment is inside the second, it returns "null". In case the second segment is included in the first, it may return one or two depending of whether it cuts a extreme or not. If they don't intersect, it returns a list with only one.
+      - "static List<AuxSegment> operator -(AuxSegment def1, List<AuxSegment> def2)": Returns a list of segments cut by the list in def2.
+      
+      - "static AuxSegment operator /(AuxSegment def1, Vector2 def2)": Returns the largest segment out of the list substracted.
+      - "static AuxSegment operator /(AuxSegment def1, AuxLine def2)": Returns the largest segment out of the list substracted.
+      - "static AuxSegment operator /(AuxSegment def1, AuxSegment def2)": Returns the largest segment out of the list substracted.
+      
+      - "static AuxSegment operator %(AuxSegment def1, Vector2 def2)": Returns the smallest segment out of the list substracted.
+      - "static AuxSegment operator %(AuxSegment def1, AuxLine def2)": Returns the largest segment out of the list substracted.
+      - "static AuxSegment operator %(AuxSegment def1, AuxSegment def2)": Returns the smallest segment out of the list substracted.
+- <b>"struct AuxWideLine":</b> This struct simulates the form of a Line wit a position, direction in a 2D environment (ignoring Z) and a width. This Line is defined by two points like it's a segment, but it's only to mark the position and rotation; plus the size. Its functions are (A):
+      
+      - "bool A.Equals (AuxWideLine def)": Returns whether the wide lines are similar (position, rotation and width)
+      
+      - "bool A.IsInside (Vector2 vec)": Returns whether the point is inside the wide line.
+      - "bool A.IsInside (AuxSegment seg)": Returns whether the segment is inside the wide line.
+      
+      - "bool A.Intersects (AuxLine def)": Returns whether the wide line and a line intersect. Parallels never intersect.
+      - "bool A.Intersects (AuxSegment def)": Returns whether the wide line and a segment intersect. Being inside also counts.
+      - "bool A.Intersects (AuxWideLine def)": Returns whether two wide lines intersect. Parallels never intersect.
+      
+      - "static AuxSegment operator *(AuxWideLine def1, AuxLine def2)" (& opposite): Returns the intersection segment between a wide line and a line, as long as they intersect. Otherwise, it returns AuxSegment.NaN.
+      - "static AuxSegment operator *(AuxWideLine def1, AuxSegment def2)" (& opposite): Returns the intersection segment between a wide line and a segment, as long as they intersect. Otherwise, it returns AuxSegment.NaN.
+      - "static AuxSegment operator *(AuxWideLine def1, AuxWideLine def2)": Returns the intersection polygon between two wide lines, as long as they intersect. Otherwise, it returns null.
+      
+      - "static List<AuxSegment> operator -(AuxSegment def2, AuxWideLine def1)": Returns a list with one or two segments depending of the wide line position when substracting. If the segment doesn't intersects, if returns itself in a list. If it's inside the wide line, it returns null.
+      - "static AuxSegment operator /(AuxSegment def1, AuxWideLine def2)": Returns the largest segment out of the list substracted.
+      - "static AuxSegment operator %(AuxSegment def1, AuxWideLine def2)": Returns the smallest segment out of the list substracted.
+- <b>"AuxPolygon":</b> This class simulates a polygon, without any hole inside. It is defined by a list of points that are each one connected to the previous and next one, and the last with the first one (minimum 3). Its functions are (A):
+   
+      - "float A.Area": Returns the area of the polygon in units ^ 2.
+      - "List<AuxTriangle> A.Triangulate": Returns a list of triangles that compose the polygon's form and their particular size.
+      - "static AuxPolygon AuxPolygon.Everything": Returns a polygon that contains everything in the space, like a plane.
+      - "static AuxPolygon AuxPolygon.RegularPolygon (float size, int faces, Vector2 offset)": Returns a regular polygon with a specific number of faces with the same distance to the center point to a certain distance (size). The center offset can be moved too.
+      
+      - "bool A.IndexOfBeg (AuxSegment seg)": Returns the index of the beginning point of a segment inside the polygon.
+      - "bool A.IndexOfEnd (AuxSegment seg)": Returns the index of the end point of a segment inside the polygon.
+      
+      - "bool A.IsInside (Vector2 vec)": Returns whether the point is inside the polygon.
+      - "bool A.IsInside (AuxSegment def)": Returns whether the segment is inside the polygon.
+      - "bool A.IsInside (AuxPolygon def, bool spin)": Returns whether the input polygon is inside the main polygon. If "spin" is true, then it checks whether the main polygon is inside the input polygon.
+      
+      - "bool A.Intersects (AuxLine def)": Returns whether the polygon and a line intersect.
+      - "bool A.Intersects (AuxSegment def)": Returns whether the polygon and a segment intersect.
+      - "bool A.Intersects (AuxWideLine def)": Returns whether the polygon and a wide line intersect.
+      - "bool A.Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      
+      - "static List<AuxSegment> operator *(AuxPolygon pol, AuxLine def)" (& opposite): Returns the intersection segment list between a polygon and a line, as long as they intersect. This will correctly create a list of segments depending of the form of the polygon. Otherwise, it returns null.
+      - "static List<AuxSegment> operator *(AuxPolygon pol, AuxSegment def)" (& opposite): Returns the intersection segment list between a polygon and a segment, as long as they intersect. This will correctly create a list of segments depending of the form of the polygon and the segment's length. Otherwise, it returns null.
+      - "static AuxMesh operator *(AuxPolygon pol, AuxWideLine def)" (& opposite): Returns the intersection mesh between a polygon and a wide line, as long as they intersect. This will correctly create a mesh with different polygons depending of the form of the polygon and the wide line. Otherwise, it returns null.
+      - "static AuxMesh operator *(AuxPolygon pol, AuxPolygon def)": Returns the intersection mesh between two polygons, as long as they intersect. This will correctly create a mesh with different polygons depending of the form of the polygons to intersect. Otherwise, it returns null.
+
+      - "static AuxMesh operator +(AuxPolygon pol, AuxPolygon def)": Returns a mesh by combining two polygons. If one is inside the other, the result is the largest one. If they don't intersect, the result is a mesh with both polygons. If they intersect, it will create one unique polygon. If there are empty holes, those will be inserted as negatives.
+      - "static AuxMesh operator -(AuxPolygon pol, AuxLine def)": Returns a mesh with the parts substracted by the line separated and added.   
+      - "static AuxMesh operator -(AuxPolygon pol, AuxSegment def)": Returns a mesh with the parts substracted by the segment separated and added. The segment must cut the entirety of a polygon's part to separate it into two or more parts.
+      - "static List<AuxSegment> operator -(AuxSegment def, AuxPolygon def)": Returns a list of segments with the parts inside the polygon substracted. If the segment is inside the polygon, it returns null. 
+      - "static AuxMesh operator -(AuxPolygon pol, AuxWideLine def)": Returns a mesh with the parts substracted by the wide line cut. This wide line can eliminate the whole polygon, or at the very least separate big chunks of it and delete area.
+      - "static AuxMesh operator -(AuxPolygon pol, AuxPolygon def)": Returns a mesh with the parts substracted by other polygon. If they don't intersect, the Mesh will only have the whole polygon. If the polygon to be cut is inside the substracter, it returns null. If the substracter is inside the polygon, it is inserted as a negative polygon in the mesh.
+      
+      - "static AuxPolygon operator /(AuxPolygon pol, AuxLine def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxPolygon operator /(AuxPolygon pol, AuxSegment def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxSegment operator /(AuxSegment def, AuxPolygon def)": Returns the largest segment out of the list substracted.
+      - "static AuxPolygon operator /(AuxPolygon pol, AuxWideLine def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxPolygon operator /(AuxPolygon pol, AuxPolygon def)": Returns the biggest polygon out of the list substracted.
+      
+      - "static AuxPolygon operator %(AuxPolygon pol, AuxLine def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxPolygon operator %(AuxPolygon pol, AuxSegment def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxSegment operator %(AuxSegment def, AuxPolygon def)": Returns the smallest segment out of the list substracted.
+      - "static AuxPolygon operator %(AuxPolygon pol, AuxWideLine def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxPolygon operator %(AuxPolygon pol, AuxPolygon def)": Returns the smallest polygon out of the list substracted.
+- <b>"AuxMesh":</b> This class simulates a set of polygons that together create a complex mesh to be modified and reproduded. It is defined by a list of polygons that by definition should be separated, otherwise they are combined. At least one is needed. This class also prepares holes in polygons of the meshes, which are saved in an inner AuxMesh called "Negatives". These Negative parts will be considered as holes and will be kept in mind in all the operations and restructuring of the mesh's form. These parts can also have their own filled content again recursively in their Negatives. Its functions are (A):
+      
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
 
 # Complement.cs:
-blablabla
+This file creates a MonoBehaviour to insert in a GameObject in Unity C#, so the functions from AuxeUnity GetRecursive work correctly. This class allows to:
+- Link the GameObject with others, so when the GetRecursive function is called, it will automatically go for them. This is using the "List<GameObject> complement" attribute.
+- Check if, in functions where the GameObject to be considered in GetRecursive, if that GameObject should be included or not. This is using the "bool include" attribute. 
+- POSSIBLE ERROR: If a GameObject calls itself, or two GameObjects call themselves recursively, it will generate an endless loop irrecoverable.
 
 # Mover.cs:
+This file contains functions that allow to apply controlled position, rotation and scale movement for GameObjects in a controlled way. This function is composed of these classes:
+- <b>"Mover":</b>
+  - A "Mover" is a class that takes a name, a GameObject and different MovevementClasses that execute a certain type of movement, one after another, during a controlled amount of time.
+  - The types of movement it allows are "nothing" (nt, to wait seconds), "position" (tr), "rotation" (rt), "scale" (sc) and "size" (sz).
+  - It also allows local or global modification (a- => atr, art, asc, asz).
+  - The structure to insert components is <b>"MovementClass"</b>, which takes the type of movement, the movement, whether it's local, incremental, and the time it takes. It has a few functions (A):
+  
+        - "MovementClass A.Scale(float number)": Applies a scale for the MovementClass to all the vector coordinates and returns it.
+        - "MovementClass A.Scale(Vector3 number)": Applies a scale for the MovementClass with each coordinate multiplying each movement coordinate (Raw multiplication), and returns it.
+        - "MovementClass A.Delay(float number)": Applies a proprtional delay for the MovementClass and returns it.
+  - The classes of "Mover" are the following ones (A):
+  
+        - "void A.Add(MovementClass nclass)": Adds in the Mover a new MovementClass.
+        - "void A.Add(float ntime)": Adds in the Mover a "nothing" MovementClass with a particular delay.
+        - "void A.Add(MovType ntype, Vector3 nmovement, float ntime, bool nlocal, bool nincremental)": Adds in the Mover a new MovementClass with all their parameters separated.
+        - "void A.Add(string ntype, Vector3 nmovement, float ntime)": Adds in the Mover a new MovementClass with all their parameters separated. The string type is identified in the string[] types (nt, tr, rt, sc, sz, atr, art, asc, asz). It assumes it's always local the movement.
+        
+        - "void A.Execute(float TM)": Executes the Mover, particulary that movement amount (which should be Time.deltaTime). Returns "false" if it ended.
+        
+        - "void A.Scale(float number)": Applies a scale for the mover and all its types.
+        - "void A.Scale(float number, params Mover.MovType[] filter)": Applies a scale for the mover to the specific Movement Types listed.
+        - "void A.Scale(Vector3 number)": Applies a scale for the mover and all its types, with a Vector3 that uses a RawMultiplication.
+        - "void A.Scale(Vector3 number)": Applies a scale for the mover to the specific Movement Types listed, with a Vector3 that uses a RawMultiplication.
+        
+        - "void A.Delay(float number)": Applies a multiplier delay to the execution time for the mover and all its types.
+        - "void A.Delay(float number, params Mover.MovType[] filter)": Applies a multiplier delay to the execution time for the mover to the specific Movement Types listed.     
+- <b>"Movers : List[Mover]":</b> This class is a list of movers with a lot of components useful to manage a lot of them at the same time. Its functions are (A):
+   
+      - "List<string> A.Names": Returns a list of names of the GameObjects affected by the list of movers. There are no repeats.
+      - "Dictionary<string, Transform> A.Dictionary": Returns a dictionary that associates the names of the GameObjects involved in it with their Transform.
+      
+      - "static Movers LoadSML (string text, string id, params GameObjectDelegate[] template)": From a SML text and a particular id/method, it creates a mover for a particular object. When the "cr(<number>)" name is called, it automatically instantiates the specific template given its position in the array.
+      - "static Movers LoadSML (string text, string id, string dictKey, Transform dictValue, params GameObjectDelegate[] template)": From a SML text and a particular id/method, it creates a mover for a particular object. When the "cr(<number>)" name is called, it automatically instantiates the specific template given its position in the array. If a name it's put to be associated with a GameObject, it checks the dictionary of string->Transform. This function allows to initiate the Dictionary with one element without creating a dictionary for it.
+      - "static Movers LoadSML (string text, string id, Dictionary<string, Transform> vars, params GameObjectDelegate[] template)": From a SML text and a particular id/method, it creates a mover for a particular object. When the "cr(<number>)" name is called, it automatically instantiates the specific template given its position in the array. If a name it's put to be associated with a GameObject, it checks the dictionary of string->Transform.
+      
+      - "void A.Add(string text, Transform nmoveObject)": Adds a new Mover to the list with their parameters inserted directly.
+      - "bool A.Execute()": Executes a frame of each Mover, to be used in each Update (Time.deltaTime). Returns "false" if all Movers finished.
+      - "Transform A.GetObject(string name)": Gets the object of a Mover whose Mover name is the same.
+      
+      - "static Movers operator +(Movers append1, Movers append2)": Returns a List of movers that has the movers of both.
+      
+      - "void A.Scale(float number)": Applies a scale for all the movers and all their types.    
+      - "void A.Scale(float number, params Mover.MovType[] filter)": Applies a scale for all the movers to the specific Movement Types listed.
+      - "void A.Scale(Vector3 number)": Applies a scale for all the movers and all their types, with a Vector3 that uses a RawMultiplication.
+      - "void A.Scale(Vector3 number, params Mover.MovType[] filter)": Applies a scale for all the movers to the specific Movement Types listed, with a Vector3 that uses a RawMultiplication.
+      
+      - "void A.Delay(float number)": Applies a multiplier delay to the execution time for all the movers and all their types.
+      - "void A.Delay(float number, params Mover.MovType[] filter)": Applies a multiplier delay to the execution time for all the movers to the specific Movement Types listed.
+      
+      - "void A.AppendString(string first, string last)": Appends to the Mover name and the GameObjects name a string before and after their previous name.
+      - "Movers A.Inverse (params AuxCoord[] inverses)": Creates a duplicate of the List of movers and all their gameObjects, and then applies a scale that inverts their position for the quoted coordinates. Their names change to be "i<" + name + ">".
