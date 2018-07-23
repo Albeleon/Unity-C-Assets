@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Auxi (Auxiliar Input):
  * This file contains a gameObject and functions to structure and expand input operations in Unity C#.
  * It needs the library "System.Collections.Generic" and "UnityEngine" to work, so it only works on Unity projects.
