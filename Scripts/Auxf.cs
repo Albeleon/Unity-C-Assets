@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Auxf (Auxiliar Function):
  * This file contains a few main functions to facilitate certain operations in C#.
  * It needs the library "System", "System.Collections.Generic" and "UnityEngine" to work, so it only works on Unity projects.
