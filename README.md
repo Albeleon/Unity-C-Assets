@@ -63,26 +63,26 @@ This file contains the main method extensions developed to facilitate functions 
       - "string A.Substring(string openKey, string closeKey, string openIgnore, string closeIgnore)": Returns a substring of the content starting from the first string subpart found and ending with the upcoming string found. It ignores the keys inside "openIgnore" and "closeIgnore".
       - "string A.SubstringChar(char openKey, char closeKey)": Returns a substring of the content starting from the first char found and ending with the upcoming char found.
       - "string A.SubstringIndex(int startIndex, int endIndex)": Returns a substring of the content starting from the first and last index position (including that last index).
-- <b>IEnumerable<char> Extensions (A):</b>
+- <b>IEnumerable[char] Extensions (A):</b>
   
       - "IEnumerable<string> A.ToIEnumerableString()": Returns an IEnumerable where each "char" has been turned into "string".
-- <b>IEnumerable<string> Extensions (A):</b>
+- <b>IEnumerable[string] Extensions (A):</b>
   
       - "string A.Concatenate()": Returns a string that is composed of all the string of the IEnumerable concatenated one after the other.
       - "string A.Concatenate(string separator)": Returns a string that is composed of all the string of the IEnumerable concatenated one after the other, separated by the separator.
-- <b>IEnumerable<int> Extensions (A):</b>
+- <b>IEnumerable[int] Extensions (A):</b>
   
       - "int A.Min()": Returns the minimum value of the elements of the array.
       - "int A.MinIndex()": Returns the earliest index of the minimum value of the elements of the array.
       - "int A.Max()": Returns the maximum value of the elements of the array.
       - "int A.MaxIndex()": Returns the earliest index of the maximum value of the elements of the array.
-- <b>IEnumerable<float> Extensions (A):</b>
+- <b>IEnumerable[float] Extensions (A):</b>
   
       - "float A.Min()": Returns the minimum value of the elements of the array.
       - "float A.MinIndex()": Returns the earliest index of the minimum value of the elements of the array.
       - "float A.Max()": Returns the maximum value of the elements of the array.
       - "float A.MaxIndex()": Returns the earliest index of the maximum value of the elements of the array.
-- <b>IEnumerable<T> Extensions (A):</b>
+- <b>IEnumerable[T] Extensions (A):</b>
   
       - "bool A.Between(int counter)": Returns whether the "counter" value reflects a valid position inside the IEnumerable.
       - "list<T1> A<T2>.ConstantClone(T1 constantValue)": Returns a list of the same size as the IEnumerable but with possible different type, that has one constant value.
@@ -93,28 +93,28 @@ This file contains the main method extensions developed to facilitate functions 
       - "T A.Last()": Returns the last element of the IEnumerable. If it's empty, returns "null".
       - "T A.Last(T defaultValue)": Returns the last element of the IEnumerable. If it's empty, returns the default value.
 
-      - "bool A.IsAll( ... )": .
-      - "bool A.IsAll( ... )": .
-      - "bool A.IsAny( ... )": .
-      - "bool A.IsAny( ... )": .
+      - "bool A.IsAll( ... )": For a list, checks if a function that returns "bool" is true for all the values inside. Otherwise, it's false. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].IsAll(largeString.Contains)" checks if all the strings are contained in "largeString") (i.e. "[List<int>].IsAll(Auxe.Between, min, max);" checks if all the numbers in the list are between "min" and "max") (i.e. "[List<int>].IsAll(value, min, Auxe.Between);" checks if the value number is always between "min" and each number in the list).
+      - "bool A.IsAll( ... )": Upgrade of the normal IsAll function. For each element of the function, it summons another IsAll/IsAny for a second list of parameters. This means that, at least, we need a function with 2 input arguments where two will be variable, and each 1st parameter will have its bool value decided after checking with each 2nd parameter. IsAll and IsAny can be combined however they want. For functions up to 3 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is, and the position of the 2nd variable argument the IsAny/IsAll. (i.e. "[List<string>].IsAll(Auxe.Contains, [List<string>].IsAny)" checks if all the parameters of the first list have, at least, one of the parameters of the 2nd list inside. Each 1st parameter will return true if at least one. If one 1st parameter fails, returns "false") .
+      - "bool A.IsAny( ... )": For a list, checks if a function that returns "bool" is true for any the values inside. Otherwise, it's false. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].IsAny(largeString.Contains)" checks if any the strings are contained in "largeString") (i.e. "[List<int>].IsAny(Auxe.Between, min, max);" checks if at least one of the numbers in the list are between "min" and "max") (i.e. "[List<int>].IsAny(value, min, Auxe.Between);" checks if value number is at least once between "min" and each number in the list).
+      - "bool A.IsAny( ... )": Upgrade of the normal IsAny function. For each element of the function, it summons another IsAll/IsAny for a second list of parameters. This means that, at least, we need a function with 2 input arguments where two will be variable, and each 1st parameter will have its bool value decided after checking with each 2nd parameter. IsAll and IsAny can be combined however they want. For functions up to 3 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is, and the position of the 2nd variable argument the IsAny/IsAll. (i.e. "[List<string>].IsAny(Auxe.Contains, [List<string>].IsAll)" checks if at least one parameter of the first list has all the parameters of the 2nd list inside. Each 1st parameter will return true if all the 2nd parameters are inside. If one 1st parameter succeeds, returns "true").
 
-      - "List<T1> A<T1>.Filter( ... )": .
-      - "T1 A<T1>.Get( ... )": .
+      - "List<T1> A<T1>.Filter( ... )": For a list, returns a list with all the elemnts that in the bool function returned "false" removed. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Filter(largeString.Contains)" returns a list with only the strings contained in "largeString") (i.e. "[List<int>].Filter(Auxe.Between, min, max);" returns a list with only the numbers between "min" and "max").
+      - "T1 A<T1>.Get( ... )": For a list, returns the first element that returned "true" with the bool function. If there's none, returns defValue. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Get(largeString.Contains, null)" returns the first string contained in "largeString". If there's none, returns "null") (i.e. "[List<int>].Get(Auxe.Between, min, max, -24);" returns the first number between "min" and "max". If there's none, returns "-24").
 
-      - "T1 A<T1>.Max( ... )": .
-      - "T1 A<T1>.Min( ... )": .
-      - "int A.MaxIndex( ... )": .
-      - "int A.MinIndex( ... )": .
-      - "float A.Summation( ... )": .
+      - "T1 A<T1>.Max( ... )": For a list, returns the earliest element whose result of the float function is the maximum. If there's none, returns defValue. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Max(Auxe.Length, null)" returns the earliest string with the maximum length. If there's none, returns null).
+      - "T1 A<T1>.Min( ... )": For a list, returns the earliest element whose result of the float function is the minimum. If there's none, returns defValue. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Min(Auxe.Length, null)" returns the earliest string with the minimum length. If there's none, returns null).
+      - "int A.MaxIndex( ... )":For a list, returns the earliest index of an element whose result of the float function is the maximum. If there's none, returns -1. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].MaxIndex(Auxe.Length)" returns the earliest index of the element with the maximum length, or -1) .
+      - "int A.MinIndex( ... )": For a list, returns the earliest index of an element whose result of the float function is the minimum. If there's none, returns -1. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].MinIndex(Auxe.Length)" returns the earliest index of the element with the minimum length, or -1).
+      - "float A.Summation( ... )": For a list, returns the summation of the float function for each element. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Max(Auxe.Length, null)" returns the summation of all the strings' length).
 
-      - "List<T> A.Execute( ... )": .
-      - "List<T> A.Execute( ... )": .
-      - "void A.Execute( ... )": .
-      - "void A.Execute( ... )": .
-      - "List<T> A.ExecuteDoble( ... )": .
-      - "void A.ExecuteDoble( ... )": .
-      - "List<T> A.ExecuteDobleDistinct( ... )": .
-      - "void A.ExecuteDobleDistinct( ... )": .
+      - "List<T> A.Execute( ... )": For a list, returns a list of the same size with the result for each one being the function result by using that element as input. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is. (i.e. "[List<string>].Execute(Auxe.IsEmpty)" returns a list of bools saying the result of the function) (i.e. "[List<int>].Execute(Auxe.Abs)" returns a list of number that have been applied the Abs function).
+      - "List<T> A.Execute( ... )": For a list, applies a function by paring in a function each first parameter with each second parameter, and adds it. This means that the size of the list will be array.Length * otherlist.Length, with the first parameter functions first. For functions up to 3 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is, and the position of the 2nd variable argument the IEnumerable. (i.e. "[List<string>].Execute(Auxe.Contains, [List<string>])" returns a list of bools saying whether each string in the 2nd list is contained in each parameter in the 1st list) (i.e. "[List<string>].Execute([List<string>], Auxe.Contains)" returns a list of bools saying whether each string in the 1nd list is contained in each parameter in the 2nd list).
+      - "void A.Execute( ... )": For a list, applies a function with each element as parameter. For functions up to 4 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is..
+      - "void A.Execute( ... )": For a list, applies a function by paring in a function each first parameter with each second parameter. For functions up to 3 input arguments, the other values can be put (must be constants), but they require to be put in the right order, with the position where the variable argument would be, it's where the Delegate is, and the position of the 2nd variable argument the IEnumerable.
+      - "List<T> A.ExecuteDoble( ... )": For a list, returns a list executing a function with both parameters as the input arguments, and adds it. "Same" indicates if it's allowed to consider a function with the same element in the two input arguments. This means that the size of the list will be "array.Length ^ 2" (or if same = false, "array.Length * (array.Length - 1)"), with the first parameter functions first. (i.e. "[List<string>].ExecuteDoble(Auxe.Contains, false)" returns a list of bools saying if each string is inside another, excluding comparisons to oneself).
+      - "void A.ExecuteDoble( ... )": For a list, returns a list executing a function with both parameters as the input arguments. "Same" indicates if it's allowed to consider a function with the same element in the two input arguments.
+      - "List<T> A.ExecuteDobleDistinct( ... )": For a list, returns a list executing a function with both parameters as the input arguments without repeating two, and adds it. This means that the size of the list will be a sequential sum from 1 to "array.Length", and the earliest parameter will always go first. (i.e. "[List<string>].ExecuteDobleDistinct(Auxe.Contains, false)" returns a list of bools saying if each earlier string contains the ones that come after it).
+      - "void A.ExecuteDobleDistinct( ... )": For a list, returns a list executing a function with both parameters as the input arguments without repeating two. The earliest parameter will always go first in the list of arguments.
 - <b>T[] Extensions (A):</b>
 
       - "bool A.Contains(T value)": Returns whether "value" is included inside the array.
@@ -126,7 +126,7 @@ This file contains the main method extensions developed to facilitate functions 
 
       - "T A.Get(int counter)": Returns the element in a particular position. In case it's not possible, it returns null instead of an exception.
       - "T A.Get(int counter, T defValue)": Returns the element in a particular position. In case it's not possible, it returns "defValue" instead of an exception.
-- <b>List<T> Extensions (A):</b>
+- <b>List[T] Extensions (A):</b>
   
       - "bool A.Contains(T value)": Combines all the list into one with the elements of one list inserted right after the previous one.
       - "List<T> A.Clone()": Returns a copy of "list" with the same size and values.
