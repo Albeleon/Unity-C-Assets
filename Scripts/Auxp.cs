@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Auxp (Auxiliar Polygon):
  * This file contains a lot of class to do 2D geometric operations with Lines, Segments, Wide Lines, Polygons and Meshes.
  * It needs the library "System.Collections.Generic" and "UnityEngine" to work, so it only works on Unity projects.
