@@ -466,17 +466,53 @@ This file contains a lot of class to do 2D geometric operations with Lines, Segm
       - "static AuxPolygon operator %(AuxPolygon pol, AuxPolygon def)": Returns the smallest polygon out of the list substracted.
 - <b>"AuxMesh":</b> This class simulates a set of polygons that together create a complex mesh to be modified and reproduded. It is defined by a list of polygons that by definition should be separated, otherwise they are combined. At least one is needed. This class also prepares holes in polygons of the meshes, which are saved in an inner AuxMesh called "Negatives". These Negative parts will be considered as holes and will be kept in mind in all the operations and restructuring of the mesh's form. These parts can also have their own filled content again recursively in their Negatives. Its functions are (A):
       
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
-      - "bool Intersects (AuxPolygon def)": Returns whether two polygons intersect.
+      - "float Area": Returns the area of the mesh in units ^ 2, as the summation of all the polygons and substracting the summation of the negatives.
+      - "List<List<AuxTriangle>> Triangulate": Returns a list composed of two list of triangles: The first one contains the triangles of all the visible polygons, including the parts that should be invisible by negatives. The second one contains the triangles of all the negative polygons, so when creating the mesh they can hide the visible ones.
+      - "float Inverse": Returns the inverse of the Mesh, with the whole content being visible except the parts of the mesh.
+      - "static implicit operator AuxMesh (AuxPolygon ap)": Turns a polygon into a mesh with only that polygon inserted.
+      
+      - "AuxMesh Clone ()": Returns a copy of the mesh.
+      
+      - "bool IsInside (Vector2 vec)": Returns whether the point is inside the mesh. Negative parts are taken in mind.
+      - "bool IsInside (AuxSegment def)": Returns whether the segment is inside the mesh. Negative parts are taken in mind.
+      - "bool IsInside (AuxPolygon def)": Returns whether polygon is inside the mesh. Negative parts are taken in mind.
+      - "bool IsInside (AuxMesh def)": Returns whether the input mesh is inside the main mesh. If "spin" is true, then it checks whether the main mesh is inside the input mesh. Negative parts are taken in mind.
+      
+      - "bool Intersects (AuxLine def)": Returns whether the mesh and a line intersect.
+      - "bool Intersects (AuxSegment def)": Returns whether the mesh and a segment intersect.
+      - "bool Intersects (AuxWideLine def)": Returns whether the mesh and a wide line intersect.
+      - "bool Intersects (AuxPolygon def)": Returns whether the mesh and a polygon intersect.
+      - "bool Intersects (AuxMesh def)": Returns whether two meshes intersect.
+      
+      - "static List<AuxSegment> operator *(AuxMesh pol, AuxLine def)" (& opposite): Returns the intersection segment list between a mesh and a line, as long as they intersect. This will correctly create a list of segments depending of the form of the mesh. The negative parts are also kept in mind. Otherwise, it returns null.
+      - "static List<AuxSegment> operator *(AuxMesh pol, AuxSegment def)" (& opposite): Returns the intersection segment list between a mesh and a segment, as long as they intersect. This will correctly create a list of segments depending of the form of the mesh and the segment's length. The negative parts are also kept in mind. Otherwise, it returns null.
+      - "static AuxMesh operator *(AuxMesh pol, AuxWideLine def)" (& opposite): Returns the intersection mesh between a mesh and a wide line, as long as they intersect. This will correctly create a mesh with different polygons depending of the form of the mesh and the wide line. The negative parts are also kept in mind. Otherwise, it returns null.
+      - "static AuxMesh operator *(AuxMesh pol, AuxPolygon def)" (& opposite): Returns the intersection mesh between a mesh and a polygon, as long as they intersect. This will correctly create a mesh with different polygons depending of the form of the mesh and the polygon to intersect. The negative parts are also kept in mind. Otherwise, it returns null.
+      - "static AuxMesh operator *(AuxMesh pol, AuxMesh def)": Returns the intersection mesh between two meshes, as long as they intersect. This will correctly create a mesh with different polygons depending of the form of the meshes to intersect. The negative parts are also kept in mind. Otherwise, it returns null.
+      
+      - "static AuxMesh operator +(AuxMesh pol, AuxPolygon def)" (& opposite): Returns a mesh by combining a mesh and a polygon. If one is inside the other, the result is the largest one. If they don't intersect, the result is a mesh with both polygons. If they intersect, it will create one unique polygon. If there are empty holes, those will be inserted as negatives. The Polygon section will be substracted from the negatives parts inside.
+      - "static AuxMesh operator +(AuxMesh pol, AuxMesh def) ": Returns a mesh by combining two meshes. If one is inside the other, the result is the largest one. If they don't intersect, the result is a mesh with both polygons. If they intersect, it will create one unique polygon. If there are empty holes, those will be inserted as negatives.
+      
+      - "static AuxMesh operator -(AuxMesh pol, AuxLine def)": Returns a mesh with the parts substracted by the line separated and added. The Negative parts are also kept in mind.
+      - "static AuxMesh operator -(AuxMesh pol, AuxSegment def)": Returns a mesh with the parts substracted by the segment separated and added. The segment must cut the entirety of a polygon's part to separate it into two or more parts. The Negative parts are also kept in mind.
+      - "static List<AuxSegment> operator -(AuxSegment def, AuxMesh def)": Returns a list of segments with the parts inside the mesh substracted. If the segment is inside the polygon, it returns null. The Negative parts are also kept in mind.
+      - "static AuxMesh operator -(AuxMesh pol, AuxWideLine def)": Returns a mesh with the parts substracted by the wide line cut.  This wide line can eliminate the whole mesh, or at the very least separate big chunks of it and delete area. The Negative parts are also kept in mind.
+      - "static AuxMesh operator -(AuxMesh pol, AuxPolygon def)": Returns a mesh with the parts substracted by other polygon. If they don't intersect (inside negatives included), the Mesh will only have the whole previous mesh. If the mesh to be cut is inside the substracter, it returns null. If the substracter is inside the mesh (not negatives), it is inserted as a negative polygon in the mesh. The Negative parts are also kept in mind.
+      - "static AuxMesh operator -(AuxMesh pol, AuxMesh def)": Returns a mesh with the parts substracted by other mesh. If they don't intersect (inside negatives included), the Mesh will only have the whole previous mesh. If the mesh to be cut is inside the substracter, it returns null. If the substracter is inside the mesh (not negatives), it is inserted as a negative (and the negatives parts the opposite). The Negative parts are also kept in mind.
+      
+      - "static AuxPolygon operator /(AuxMesh pol, AuxLine def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxPolygon operator /(AuxMesh pol, AuxSegment def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxSegment operator /(AuxSegment def, AuxMesh def)": Returns the largest segment out of the list substracted.
+      - "static AuxPolygon operator /(AuxMesh pol, AuxWideLine def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxPolygon operator /(AuxMesh pol, AuxPolygon def)": Returns the biggest polygon out of the list substracted.
+      - "static AuxPolygon operator /(AuxMesh pol, AuxMesh def)": Returns the biggest polygon out of the list substracted.
+      
+      - "static AuxPolygon operator %(AuxMesh pol, AuxLine def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxPolygon operator %(AuxMesh pol, AuxSegment def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxSegment operator %(AuxSegment def, AuxMesh def)": Returns the smallest segment out of the list substracted.
+      - "static AuxPolygon operator %(AuxMesh pol, AuxWideLine def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxPolygon operator %(AuxMesh pol, AuxPolygon def)": Returns the smallest polygon out of the list substracted.
+      - "static AuxPolygon operator %(AuxMesh pol, AuxMesh def)": Returns the smallest polygon out of the list substracted.
 
 # Complement.cs:
 This file creates a MonoBehaviour to insert in a GameObject in Unity C#, so the functions from AuxeUnity GetRecursive work correctly. This class allows to:
