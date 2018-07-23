@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Mover:
  * This file contains functions that allow to apply controlled position, rotation and scale movement for GameObjects in a controlled way.
  * It needs the library "System.Collections.Generic" and "UnityEngine" to work, so it only works on Unity projects.
