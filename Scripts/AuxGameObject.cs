@@ -196,18 +196,12 @@ public class AuxGameObject : MonoBehaviour
 
     //Attributes -> Prefabs:
     private string m_UITriangle = "Prefabs/UITriangle";
-    private string m_UIShadowLine = "Prefabs/IndividualTransparentLine";
-    private string m_UILine = "Prefabs/SimpleLine";
     [HideInInspector] public Object o_UITriangle;
-    [HideInInspector] public Object o_UIShadowLine;
-    [HideInInspector] public Object o_UILine;
 
     //Constructors:
     void Awake ()
     {
         o_UITriangle = Resources.Load(m_UITriangle);
-        o_UIShadowLine = Resources.Load(m_UIShadowLine);
-        o_UILine = Resources.Load(m_UILine);
     }
 
 
