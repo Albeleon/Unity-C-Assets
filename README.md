@@ -1,5 +1,12 @@
 # Unity-C#-Assets
-Assets created for Unity C# to facilitate the work with it.
+Assets created for Unity C# to facilitate the work with it. This README will define each part.
+
+# PREFABS
+
+# UITriangle.prefab:
+Prefab of a mesh created with the Unity UI Extension UIPolygon. This means, in order for it to work, Unity UI Extensions must be installed. The Script AuxGameObject.cs will load this resource automatically and use in the function CreateUIMesh().
+
+# SCRIPTS
 
 # Auxc.cs (Auxiliar Comparer):
 This file has the Comparer functions to be used in Sort functions.
